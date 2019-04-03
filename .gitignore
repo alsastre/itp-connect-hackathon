@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *AppImage
+.vscode/
 *$py.class
 
 # C extensions
