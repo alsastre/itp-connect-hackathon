@@ -1,5 +1,7 @@
 # LAUNDROMAT
+(Client) -[Transaction]-> (Client) -[ACCOUNT_IN]-> (BANK)
 ## RELATIONSHIPS
+
 ### ACCOUNT_IN Relates Clients to Banks
 
 ### TRANSACTION Transaction between two clients
