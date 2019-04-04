@@ -1,0 +1,21 @@
+create indexes:
+
+CREATE INDEX ON :Bank(name)
+CREATE INDEX ON :Client(name)
+
+Fetching all ING entities
+match (a:Bank)
+Where a.name starts with "ING"
+return distinct a.name
+
+
+looking at all relations with ing with clients
+match p1=(a:Bank)-[]-(b)-[]-(c)
+Where a.name starts with "ING"
+return p1
+
+query to aggregate:
+match (b:Client)-[r:SEND_TO]->(c:Client)
+with b,c,sum(toInteger(r.amount)) as y
+create (b)-[:SUM{total:y}]->(c)
+
