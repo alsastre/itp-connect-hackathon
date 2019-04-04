@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>THE FUZZY-WOOZY</title>
+  <style type="text/css">
+    html,
+    body {
+      font: 20pt arial;
+    }
+  </style>
+
+  <!-- FIXME: load from dist -->
+  <script type="text/javascript" src="neovis.js/dist/neovis.js"></script>
+  <link rel="stylesheet" href="semantic-ui/semantic.min.css">
+  </script>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <!--- Site CSS -->
+  <link rel="stylesheet" type="text/css" href="semantic-ui/components/reset.css">
+  <link rel="stylesheet" type="text/css" href="semantic-ui/components/site.css">
+  <link rel="stylesheet" type="text/css" href="semantic-ui/components/grid.css">
+
+  <!--- Component CSS -->
+  <link rel="stylesheet" type="text/css" href="semantic-ui/components/menu.css">
+  <link rel="stylesheet" type="text/css" href="semantic-ui/components/input.css">
+  <link rel="stylesheet" type="text/css" href="semantic-ui/components/dropdown.css">
+  <link rel="stylesheet" type="text/css" href="semantic-ui/components/icon.css">
+  <link rel="stylesheet" type="text/css" href="semantic-ui/components/button.css">
+  <link rel="stylesheet" type="text/css" href="semantic-ui/components/transition.css">
+
+  <!--- Example Libs -->
+  <link rel="stylesheet" type="text/css" href="semantic-ui/components/popup.css">
+  <!-- <script src="semantic-ui/library/iframe-content.js"></script>
+    <script src="semantic-ui/show-examples.js"></script> -->
+  <script type="text/javascript" src="semantic-ui/components/popup.js"></script>
+
+  <!--- Component JS -->
+  <script type="text/javascript" src="semantic-ui/components/transition.js"></script>
+  <script type="text/javascript" src="semantic-ui/components/dropdown.js"></script>
+  <script type="text/javascript">
+    // define config car
+    // instantiate nodevis object
+    // draw
+
+    var viz;
+
+    function draw() {
+      var config = {
+        container_id: "viz",
+        server_url: "bolt://localhost:7687",
+        server_user: "neo4j",
+        server_password: "fuzzy",
+        //INFO DATA: https://github.com/neo4j-contrib/neovis.js/
+        labels: {
+          "Character": {
+            "caption": "name",
+            "size": "pagerank",
+            "community": "community"
+          }
+        },
+        relationships: {
+          "INTERACTS": {
+            "thickness": "weight",
+            "caption": false
+          }
+        },
+        initial_cypher: "MATCH (n)-[r:INTERACTS]->(m) RETURN * LIMIT 10"
+      };
+
+      viz = new NeoVis.default(config);
+      viz.render();
+      console.log(viz);
+
+    }
+  </script>
+</head>
+
+<body onload="draw()">
+  <p></p>
+  <div class="ui container" style={marginTop:'10px'}>
+    <h2 class="ui huge header">
+      <!-- <img class="ui image" src="/images/icons/school.png"> -->
+      <div class="content">
+        Learn More - THE FUZZY-WOOZY
+      </div>
+    </h2>
+    <div class="ui segment">
+      <p></p>
+      <div class="ui grid">
+        <div class="twelve wide stretched column">
+          <div class="ui segment" id="viz">
+            This is an stretched grid column. This segment will always match the tab height
+          </div>
+        </div>
+        <div class="four wide column">
+          <div class="ui vertical fluid right menu">
+            <a class="item" id="graph1">
+              Graph1
+            </a>
+            <a class="item" id="graph2">
+              Graph2
+            </a>
+            <a class="item">
+              Companies
+            </a>
+            <a class="item">
+              Links
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+<script>
+  $(document).ready(function () {
+    $('.ui.menu .ui.dropdown').dropdown({
+      on: 'hover'
+    });
+    $('.ui.menu a.item')
+      .on('click', function () {
+        $(this)
+          .addClass('active')
+          .siblings()
+          .removeClass('active')
+          ;
+      })
+      ;
+
+    })
+    ;
+
+  $('#graph1').on('click', function () {viz.renderWithCypher(
+    "MATCH (n)-[r:INTERACTS]->(m) RETURN * LIMIT 10"
+    )
+  });
+
+  // Use backticks for multiline strings https://stackoverflow.com/a/6247331
+  $('#graph2').on('click', function () {
+    viz.renderWithCypher(
+      `MATCH p1=(n:Character {name:'Arya-Stark'})-[r:INTERACTS]-(:Character)-[:INTERACTS]-(:Character)
+      RETURN p1 LIMIT 200`
+    )
+  });
+</script>
+
+</html>
