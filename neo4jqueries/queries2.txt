@@ -1,0 +1,55 @@
+
+
+
+
+
+
+
+
+
+
+
+CREATE INDEX ON :Bank(name)
+CREATE INDEX ON :Client(name)
+
+Load  CSV with headers from 'file:///itp-connect-hackathon/data/cleaned.csv' as line
+Merge (b_1:Bank {name:coalesce(line.payer_bank,"unknown")})
+Merge (b_2:Bank {name:coalesce(line.beneficiary_bank,"unknown")})
+Merge (c_1:Client {name:coalesce(line.payer_name,"unknown")})
+Merge (c_2:Client {name:coalesce(line.beneficiary_name,"unknown")})
+Merge (c_1)-[:BELONGS]->(b_1)
+Merge (c_2)-[:BELONGS]->(b_2)
+Merge (c_1)-[:SEND_TO{amount:line.amount_eur}]->(c_2)
+
+with 1 as dummy
+
+match (b:Client)-[r:SEND_TO]->(c:Client)
+with b,c,sum(toInteger(r.amount)) as y,count(r.amount) as g
+merge(b)-[:SUM{total:y,amount:g}]->(c)
+
+with 1 as dummy
+
+match (a) 
+where a.name STARTS with "unknown"
+detach delete a
+
+with 1 as dummy
+
+match (n:Bank)
+Where n.name starts with "ING"
+set n:ING
+return n
+
+match (a)-[c:SEND_TO]-(b)
+delete c
+
+
+match p1=(a:Bank)<-[:BELONGS]-(b)-[:SUM]-(c)-[:BELONGS]->(d:Bank)
+Where a.name starts with "ING"
+return p1
+
+
+match p1=(a:Bank)<-[:BELONGS]-(b)-[f:SUM]-(c)-[:BELONGS]->(d:Bank)
+Where f.amount > 500
+return f
+returns list where 
