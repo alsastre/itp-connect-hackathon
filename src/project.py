@@ -38,7 +38,7 @@ def clean_data(df):
   # print("------------BEFORE CLEAN:--------------")
   # print(df.nunique())
   # print(df["payer_bank"])
-  fuzzy_clean(df)
+  # fuzzy_clean(df)
   # print("-------AFTER CLEAN:------------")
   # print(df.nunique())
   # print(df["payer_bank"])
